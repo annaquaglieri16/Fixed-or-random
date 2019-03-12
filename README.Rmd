@@ -37,9 +37,9 @@ b = 4
 set.seed(100)
 x <- rnorm(25,mean = mu,sd = 1)
 set.seed(100)
-y <- rnorm(25,mean = mu + d,sd = 1)
+y <- rnorm(25,mean = mu + d,sd = 1.7)
 set.seed(100)
-x_1 <- rnorm(25,mean = mu + b,sd = 1)
+x_1 <- rnorm(25,mean = mu + b,sd = 1.4)
 
 value <- c(x,y,x_1)
 x <- data.frame(value = value,
@@ -69,9 +69,9 @@ $d=\bar{y} - \bar{x}$
 mean(x$value[x$Treatment==1 & x$blocks == 1]) - mean(x$value[x$Treatment==0 & x$blocks == 1])
 ```
 
-* *batch effect*
+* *batch effect* $b=\bar{x}' - \bar{x}$
 
-$b=\bar{x}' - \bar{x}$
+
 
 ```{r}
 mean(x$value[x$Treatment==0 & x$blocks == 2]) - mean(x$value[x$Treatment==0 & x$blocks == 1])

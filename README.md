@@ -37,9 +37,9 @@ b = 4
 set.seed(100)
 x <- rnorm(25,mean = mu,sd = 1)
 set.seed(100)
-y <- rnorm(25,mean = mu + d,sd = 1)
+y <- rnorm(25,mean = mu + d,sd = 1.7)
 set.seed(100)
-x_1 <- rnorm(25,mean = mu + b,sd = 1)
+x_1 <- rnorm(25,mean = mu + b,sd = 1.4)
 
 value <- c(x,y,x_1)
 x <- data.frame(value = value,
@@ -64,19 +64,19 @@ summary(lm(value ~ factor(Treatment) + factor(blocks),data=x))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0220 -0.4970 -0.0119  0.4027  2.2021 
+    ## -1.7374 -0.6726 -0.0167  0.5851  3.7436 
     ## 
     ## Coefficients:
     ##                    Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)          0.1082     0.1406    0.77    0.444    
-    ## factor(Treatment)1   8.0000     0.1988   40.24   <2e-16 ***
-    ## factor(blocks)2      4.0000     0.1988   20.12   <2e-16 ***
+    ## (Intercept)          0.1082     0.1963   0.551    0.583    
+    ## factor(Treatment)1   8.0757     0.2776  29.090   <2e-16 ***
+    ## factor(blocks)2      4.0433     0.2776  14.565   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.7029 on 72 degrees of freedom
-    ## Multiple R-squared:  0.9574, Adjusted R-squared:  0.9562 
-    ## F-statistic: 809.7 on 2 and 72 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9815 on 72 degrees of freedom
+    ## Multiple R-squared:  0.9216, Adjusted R-squared:  0.9194 
+    ## F-statistic: 423.1 on 2 and 72 DF,  p-value: < 2.2e-16
 
 -   *μ*
 
@@ -94,17 +94,15 @@ $d=\\bar{y} - \\bar{x}$
 mean(x$value[x$Treatment==1 & x$blocks == 1]) - mean(x$value[x$Treatment==0 & x$blocks == 1])
 ```
 
-    ## [1] 8
+    ## [1] 8.07572
 
--   *batch effect*
-
-$b=\\bar{x}' - \\bar{x}$
+-   *batch effect* $b=\\bar{x}' - \\bar{x}$
 
 ``` r
 mean(x$value[x$Treatment==0 & x$blocks == 2]) - mean(x$value[x$Treatment==0 & x$blocks == 1])
 ```
 
-    ## [1] 4
+    ## [1] 4.043269
 
 What if we removed block 2?
 ---------------------------
@@ -120,18 +118,18 @@ summary(lm(value ~ factor(Treatment),data=x[x$blocks == 1,]))
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0220 -0.4970 -0.0119  0.4027  2.2021 
+    ## -1.7374 -0.5943 -0.0151  0.5554  3.7436 
     ## 
     ## Coefficients:
     ##                    Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)          0.1082     0.1406    0.77    0.445    
-    ## factor(Treatment)1   8.0000     0.1988   40.24   <2e-16 ***
+    ## (Intercept)          0.1082     0.1960   0.552    0.584    
+    ## factor(Treatment)1   8.0757     0.2773  29.128   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.7029 on 48 degrees of freedom
-    ## Multiple R-squared:  0.9712, Adjusted R-squared:  0.9706 
-    ## F-statistic:  1619 on 1 and 48 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9802 on 48 degrees of freedom
+    ## Multiple R-squared:  0.9465, Adjusted R-squared:  0.9453 
+    ## F-statistic: 848.4 on 1 and 48 DF,  p-value: < 2.2e-16
 
 -   The second batch does not provide any information in the estimate of the disease effect.
 -   Is it still worth putting it in?
@@ -160,9 +158,9 @@ sqrt(unscaled_var*sigma)
     ## Warning in sqrt(unscaled_var * sigma): NaNs produced
 
     ##                   1 Treatment    blocks
-    ## 1         0.3143279       NaN       NaN
-    ## Treatment       NaN 0.1987984 0.1405717
-    ## blocks          NaN 0.1405717 0.1987984
+    ## 1         0.4389351       NaN       NaN
+    ## Treatment       NaN 0.2776069 0.1962977
+    ## blocks          NaN 0.1962977 0.2776069
 
 ``` r
 summary(mod1)
@@ -174,19 +172,19 @@ summary(mod1)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0220 -0.4970 -0.0119  0.4027  2.2021 
+    ## -1.7374 -0.6726 -0.0167  0.5851  3.7436 
     ## 
     ## Coefficients:
     ##                    Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)          0.1082     0.1406    0.77    0.444    
-    ## factor(Treatment)1   8.0000     0.1988   40.24   <2e-16 ***
-    ## factor(blocks)2      4.0000     0.1988   20.12   <2e-16 ***
+    ## (Intercept)          0.1082     0.1963   0.551    0.583    
+    ## factor(Treatment)1   8.0757     0.2776  29.090   <2e-16 ***
+    ## factor(blocks)2      4.0433     0.2776  14.565   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.7029 on 72 degrees of freedom
-    ## Multiple R-squared:  0.9574, Adjusted R-squared:  0.9562 
-    ## F-statistic: 809.7 on 2 and 72 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9815 on 72 degrees of freedom
+    ## Multiple R-squared:  0.9216, Adjusted R-squared:  0.9194 
+    ## F-statistic: 423.1 on 2 and 72 DF,  p-value: < 2.2e-16
 
 -   If we only use block 1
 
@@ -218,18 +216,18 @@ summary(mod1)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
-    ## -1.0220 -0.4970 -0.0119  0.4027  2.2021 
+    ## -1.7374 -0.5943 -0.0151  0.5554  3.7436 
     ## 
     ## Coefficients:
     ##                    Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)          0.1082     0.1406    0.77    0.445    
-    ## factor(Treatment)1   8.0000     0.1988   40.24   <2e-16 ***
+    ## (Intercept)          0.1082     0.1960   0.552    0.584    
+    ## factor(Treatment)1   8.0757     0.2773  29.128   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 0.7029 on 48 degrees of freedom
-    ## Multiple R-squared:  0.9712, Adjusted R-squared:  0.9706 
-    ## F-statistic:  1619 on 1 and 48 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 0.9802 on 48 degrees of freedom
+    ## Multiple R-squared:  0.9465, Adjusted R-squared:  0.9453 
+    ## F-statistic: 848.4 on 1 and 48 DF,  p-value: < 2.2e-16
 
 -   Which is equivalent to estimating:
 
@@ -262,19 +260,19 @@ summary(mod1)
     ## lm(formula = value ~ factor(Treatment), data = x)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -3.0220 -1.4955  0.0088  1.5175  4.2021 
+    ##    Min     1Q Median     3Q    Max 
+    ## -3.044 -1.678  0.015  1.346  5.105 
     ## 
     ## Coefficients:
     ##                    Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)           2.108      0.254   8.298 3.87e-12 ***
-    ## factor(Treatment)1    6.000      0.440  13.636  < 2e-16 ***
+    ## (Intercept)          2.1298     0.2738   7.778 3.68e-11 ***
+    ## factor(Treatment)1   6.0541     0.4743  12.764  < 2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.796 on 73 degrees of freedom
-    ## Multiple R-squared:  0.7181, Adjusted R-squared:  0.7142 
-    ## F-statistic: 185.9 on 1 and 73 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 1.936 on 73 degrees of freedom
+    ## Multiple R-squared:  0.6906, Adjusted R-squared:  0.6863 
+    ## F-statistic: 162.9 on 1 and 73 DF,  p-value: < 2.2e-16
 
 Block as random effect
 ----------------------
@@ -289,26 +287,26 @@ summary(fm1)
     ## Formula: value ~ factor(Treatment) + (1 | blocks)
     ##    Data: x
     ## 
-    ## REML criterion at convergence: 168.8
+    ## REML criterion at convergence: 216.9
     ## 
     ## Scaled residuals: 
-    ##      Min       1Q   Median       3Q      Max 
-    ## -1.46107 -0.71066 -0.01693  0.57644  3.14013 
+    ##     Min      1Q  Median      3Q     Max 
+    ## -1.7701 -0.6786 -0.0164  0.5961  3.8142 
     ## 
     ## Random effects:
     ##  Groups   Name        Variance Std.Dev.
-    ##  blocks   (Intercept) 7.980    2.8249  
-    ##  Residual             0.494    0.7029  
+    ##  blocks   (Intercept) 8.1347   2.8521  
+    ##  Residual             0.9633   0.9815  
     ## Number of obs: 75, groups:  blocks, 2
     ## 
     ## Fixed effects:
     ##                    Estimate Std. Error t value
-    ## (Intercept)          2.1082     2.0000   1.054
-    ## factor(Treatment)1   7.9951     0.1987  40.229
+    ## (Intercept)          2.1298     2.0215   1.054
+    ## factor(Treatment)1   8.0662     0.2774  29.073
     ## 
     ## Correlation of Fixed Effects:
     ##             (Intr)
-    ## fctr(Trtm)1 -0.025
+    ## fctr(Trtm)1 -0.034
 
 Compare fixed random models
 ===========================
