@@ -1,6 +1,6 @@
 Fixed or random?
 ================
-Anna Quaglieri
+Anna Quaglieri - Speed Lab meeting March 2019
 13/12/2017
 
 -   [Confounded design](#confounded-design)
