@@ -16,9 +16,11 @@ Anna Quaglieri
     -   [Comments](#comments)
 -   [Simulate four batches](#simulate-four-batches)
     -   [High disease effect and low between batches variability](#high-disease-effect-and-low-between-batches-variability)
+    -   [Block as random effect](#block-as-random-effect-1)
     -   [High disease effect and high between batches variability](#high-disease-effect-and-high-between-batches-variability)
     -   [Low disease effect and high between batches variability](#low-disease-effect-and-high-between-batches-variability)
     -   [Low disease effect and low between batches variability](#low-disease-effect-and-low-between-batches-variability)
+    -   [Comments](#comments-1)
 
 Confounded design
 =================
@@ -190,8 +192,8 @@ summary(mod1)
 
 ``` r
 mod1 <- lm(value ~ factor(Treatment),data=x[x$blocks == 1,])
-sigma <- sum(mod1$residuals^2)/(nrow(x[x$blocks == 0,])-2)
-x2 <- x[x$blocks == 0,]
+sigma <- sum(mod1$residuals^2)/(nrow(x[x$blocks == 1,])-2)
+x2 <- x[x$blocks == 1,]
 x2[,2] <- as.numeric(as.character(x2[,2]))
 X <- as.matrix(cbind(1,x2[,2]))
 
@@ -202,8 +204,9 @@ sqrt(unscaled_var*sigma)
 
     ## Warning in sqrt(unscaled_var * sigma): NaNs produced
 
-    ##      [,1]
-    ## [1,]  NaN
+    ##           [,1]      [,2]
+    ## [1,] 0.1960459       NaN
+    ## [2,]       NaN 0.2772508
 
 ``` r
 summary(mod1)
@@ -326,6 +329,7 @@ set.seed(100)
 plot(density(rnorm(1000,mean = 0,sd = sqrt(4))),xlab="b_j",ylab="density",main="1k Random sampling from b_j distribution",xlim=c(-20,20))
 lines(density(rnorm(1000,mean = 0,sd = sqrt(40))),col=2)
 lines(density(rnorm(1000,mean = 0,sd = sqrt(400))),col=4)
+legend("topleft",legend=c("sigma2_b = 4","sigma2_b = 40","sigma2_b = 400"),pch = rep(3,16),col=c(1,2,4))
 ```
 
 ![](README_files/figure-markdown_github/unnamed-chunk-14-1.png)
@@ -340,7 +344,7 @@ sigma2_b <- 4
 sigma2_e <- 4
 ```
 
--   Random *b*<sub>*j**s*</sub>. The random intercepts below are quite close to each other, meaning that the batch effect might not be that small. The random effects could be increases by increasing *s**i**g**m**a*<sub>*b*</sub>
+-   Random *b*<sub>*j**s*</sub>. The random intercepts below are quite close to each other, meaning that the batch effect will be quite small. The random effects could be increased by increasing *s**i**g**m**a*<sub>*b*</sub>
 
 ``` r
 set.seed(100)
@@ -387,22 +391,22 @@ table(datax$Treatment,datax$blocks)
     ##   1 25  0
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
     ## -3.3889 -1.0925 -0.0366  1.1621  4.4042 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  -0.7880     0.3120  -2.526  0.01373 *  
-    ## Treatment1    8.0000     0.4412  18.133  < 2e-16 ***
-    ## blocks2       1.3820     0.4412   3.133  0.00251 ** 
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -0.7880     0.3120  -2.526  0.01373 *  
+    ## factor(Treatment)1   8.0000     0.4412  18.133  < 2e-16 ***
+    ## factor(blocks)2      1.3820     0.4412   3.133  0.00251 ** 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -504,22 +508,22 @@ table(datax$Treatment,datax$blocks)
     ##   1 25  0
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
     ## -3.3889 -1.0925 -0.0366  1.1621  4.4042 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  -2.9598     0.3120  -9.488 2.60e-14 ***
-    ## Treatment1    8.0000     0.4412  18.133  < 2e-16 ***
-    ## blocks2       4.1226     0.4412   9.345 4.78e-14 ***
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -2.9598     0.3120  -9.488 2.60e-14 ***
+    ## factor(Treatment)1   8.0000     0.4412  18.133  < 2e-16 ***
+    ## factor(blocks)2      4.1226     0.4412   9.345 4.78e-14 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -615,22 +619,22 @@ table(datax$Treatment,datax$blocks)
     ##   1 25  0
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
     ##     Min      1Q  Median      3Q     Max 
     ## -3.3889 -1.0925 -0.0366  1.1621  4.4042 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  -9.8275     0.3120  -31.50   <2e-16 ***
-    ## Treatment1    8.0000     0.4412   18.13   <2e-16 ***
-    ## blocks2      12.7891     0.4412   28.99   <2e-16 ***
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -9.8275     0.3120  -31.50   <2e-16 ***
+    ## factor(Treatment)1   8.0000     0.4412   18.13   <2e-16 ***
+    ## factor(blocks)2     12.7891     0.4412   28.99   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
@@ -674,10 +678,18 @@ Comments
 
 -   In the examples above we increased *s**i**g**m**a*<sub>*b*</sub><sup>2</sup> to allow for higher variability between batches. It is interesting to observe that, as the variability between batches tends to infinity, the effect size estimated by the mixed model approaches the fixed effect estimate.
 
--   One intuitive way to think about it
+-   This case is very limited in how accurately we the *σ*<sub>*b*</sub><sup>2</sup> and *σ*<sub>*e*</sub><sup>2</sup> are estimated since we only have 2 observations (2 blocks) from which we have to estimate both of them. Both blocks contain both *σ*<sub>*b*</sub><sup>2</sup> + *σ*<sub>*e*</sub><sup>2</sup>. That's why they are so different in the REML estimate. There are still a lot of issues in the way these two components are estimated (Terry's is trying to figure out the algebra). This could be also a problem in the way the actual std.error estimates of the estimators are estimated and we might doubt a fixed effects model with only two blocks.
+
+-   **But, does this problem becomes better if we have two blocks but across thousands of genes? The assumption done in Limma-Dupl correlations is that the *ρ* is the same across genes. Does that increase the number that we use to make estimates?** - to be better understood maybe by
+
+-   The use of fixed and random really depends on the context in which we are. Say, that in this case we only have two batches, that's all we got, then the fixed effect way is the closest approach that we can use. If we instead think that these two batches are two random observations out of a common distribution then the random effect is the design that you would think of. In the fixed effect we use one block as the baseline and we estimate the batch effect as a delta of difference in the other batches. However, with the random model we assign its own *b*<sub>*j*</sub> to every batch.
 
 Simulate four batches
 =====================
+
+![](img/four-batches.png)
+
+-   Identifiability issue raised by Jinjin. The random variable from every batch will have the same sum of *σ*<sub>*b*</sub><sup>2</sup> + *σ*<sub>*e**p**s**i**l**o**n*</sub><sup>2</sup> and that's why their estimation does not happen in the usual way as in the OLS.
 
 High disease effect and low between batches variability
 -------------------------------------------------------
@@ -748,6 +760,69 @@ ggplot(datax,aes(x=factor(blocks),y=value,fill=factor(Treatment))) + geom_boxplo
 
 ![](README_files/figure-markdown_github/unnamed-chunk-35-1.png)
 
+``` r
+mod1 <- lm(value ~ factor(Treatment) + factor(blocks),data=datax)
+
+summary(mod1)
+```
+
+    ## 
+    ## Call:
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
+    ## 
+    ## Residuals:
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.39630 -0.76240 -0.03108  0.82316  3.12778 
+    ## 
+    ## Coefficients:
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -0.5437     0.1749  -3.108  0.00217 ** 
+    ## factor(Treatment)1  29.9730     0.1749 171.330  < 2e-16 ***
+    ## factor(blocks)2      0.9637     0.2766   3.484  0.00061 ***
+    ## factor(blocks)3      0.5986     0.2143   2.794  0.00573 ** 
+    ## factor(blocks)4      2.0048     0.2143   9.357  < 2e-16 ***
+    ## factor(blocks)5      0.8621     0.2766   3.117  0.00211 ** 
+    ## ---
+    ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
+    ## 
+    ## Residual standard error: 1.071 on 194 degrees of freedom
+    ## Multiple R-squared:  0.9947, Adjusted R-squared:  0.9946 
+    ## F-statistic:  7348 on 5 and 194 DF,  p-value: < 2.2e-16
+
+Block as random effect
+----------------------
+
+``` r
+datax$blocks <- factor(datax$blocks)
+fm1 <- lmer(value ~ factor(Treatment) + (1 | blocks), data = datax)
+summary(fm1)
+```
+
+    ## Linear mixed model fit by REML ['lmerMod']
+    ## Formula: value ~ factor(Treatment) + (1 | blocks)
+    ##    Data: datax
+    ## 
+    ## REML criterion at convergence: 609.6
+    ## 
+    ## Scaled residuals: 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.23137 -0.70820 -0.03701  0.75827  2.92730 
+    ## 
+    ## Random effects:
+    ##  Groups   Name        Variance Std.Dev.
+    ##  blocks   (Intercept) 0.5194   0.7207  
+    ##  Residual             1.1472   1.0711  
+    ## Number of obs: 200, groups:  blocks, 5
+    ## 
+    ## Fixed effects:
+    ##                    Estimate Std. Error t value
+    ## (Intercept)          0.3421     0.3362   1.018
+    ## factor(Treatment)1  29.9715     0.1735 172.766
+    ## 
+    ## Correlation of Fixed Effects:
+    ##             (Intr)
+    ## fctr(Trtm)1 -0.157
+
 High disease effect and high between batches variability
 --------------------------------------------------------
 
@@ -815,41 +890,36 @@ datax <- data.frame(value = value,
 ggplot(datax,aes(x=factor(blocks),y=value,fill=factor(Treatment))) + geom_boxplot()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-37-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-39-1.png)
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
-    ##    Min     1Q Median     3Q    Max 
-    ## -9.079 -3.464 -1.509  5.120  9.697 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.39630 -0.76240 -0.03108  0.82316  3.12778 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  -9.7794     0.9080  -10.77   <2e-16 ***
-    ## Treatment    31.1225     0.7403   42.04   <2e-16 ***
-    ## blocks        3.8441     0.2628   14.62   <2e-16 ***
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -6.9356     0.1749  -39.65   <2e-16 ***
+    ## factor(Treatment)1  29.9730     0.1749  171.33   <2e-16 ***
+    ## factor(blocks)2      9.0297     0.2766   32.64   <2e-16 ***
+    ## factor(blocks)3      5.9860     0.2143   27.94   <2e-16 ***
+    ## factor(blocks)4     19.6836     0.2143   91.87   <2e-16 ***
+    ## factor(blocks)5      8.7428     0.2766   31.61   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 5.033 on 197 degrees of freedom
-    ## Multiple R-squared:  0.9043, Adjusted R-squared:  0.9033 
-    ## F-statistic: 930.8 on 2 and 197 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 1.071 on 194 degrees of freedom
+    ## Multiple R-squared:  0.9957, Adjusted R-squared:  0.9956 
+    ## F-statistic:  9049 on 5 and 194 DF,  p-value: < 2.2e-16
 
 -   Resisuals after using fixed effects
-
-``` r
-mod <- lm(value ~ blocks,data=datax)
-datax$res <- mod$residuals
-ggplot(datax,aes(x=factor(blocks),y=res,fill=factor(Treatment))) + geom_boxplot()
-```
-
-![](README_files/figure-markdown_github/unnamed-chunk-39-1.png)
 
 ``` r
 fm1 <- lmer(value ~ factor(Treatment) + (1 | blocks), data = datax)
@@ -948,31 +1018,34 @@ datax <- data.frame(value = value,
 ggplot(datax,aes(x=factor(blocks),y=value,fill=factor(Treatment))) + geom_boxplot()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-42-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-43-1.png)
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
-    ##    Min     1Q Median     3Q    Max 
-    ## -9.079 -3.464 -1.509  5.120  9.697 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.39630 -0.76240 -0.03108  0.82316  3.12778 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept)  -9.7794     0.9080 -10.770  < 2e-16 ***
-    ## Treatment     5.1225     0.7403   6.919 6.22e-11 ***
-    ## blocks        3.8441     0.2628  14.625  < 2e-16 ***
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -6.9356     0.1749  -39.65   <2e-16 ***
+    ## factor(Treatment)1   3.9730     0.1749   22.71   <2e-16 ***
+    ## factor(blocks)2      9.0297     0.2766   32.64   <2e-16 ***
+    ## factor(blocks)3      5.9860     0.2143   27.94   <2e-16 ***
+    ## factor(blocks)4     19.6836     0.2143   91.87   <2e-16 ***
+    ## factor(blocks)5      8.7428     0.2766   31.61   <2e-16 ***
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 5.033 on 197 degrees of freedom
-    ## Multiple R-squared:  0.5504, Adjusted R-squared:  0.5459 
-    ## F-statistic: 120.6 on 2 and 197 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 1.071 on 194 degrees of freedom
+    ## Multiple R-squared:  0.9799, Adjusted R-squared:  0.9794 
+    ## F-statistic:  1896 on 5 and 194 DF,  p-value: < 2.2e-16
 
 ``` r
 fm1 <- lmer(value ~ factor(Treatment) + (1 | blocks), data = datax)
@@ -1071,31 +1144,34 @@ datax <- data.frame(value = value,
 ggplot(datax,aes(x=factor(blocks),y=value,fill=factor(Treatment))) + geom_boxplot()
 ```
 
-![](README_files/figure-markdown_github/unnamed-chunk-46-1.png)
+![](README_files/figure-markdown_github/unnamed-chunk-47-1.png)
 
 ``` r
-summary(lm(value ~ Treatment + blocks,data=datax))
+summary(lm(value ~ factor(Treatment) + factor(blocks),data=datax))
 ```
 
     ## 
     ## Call:
-    ## lm(formula = value ~ Treatment + blocks, data = datax)
+    ## lm(formula = value ~ factor(Treatment) + factor(blocks), data = datax)
     ## 
     ## Residuals:
-    ##     Min      1Q  Median      3Q     Max 
-    ## -2.2379 -0.7967 -0.1706  0.6209  3.7117 
+    ##      Min       1Q   Median       3Q      Max 
+    ## -2.39630 -0.76240 -0.03108  0.82316  3.12778 
     ## 
     ## Coefficients:
-    ##             Estimate Std. Error t value Pr(>|t|)    
-    ## (Intercept) -0.81108    0.21298  -3.808 0.000187 ***
-    ## Treatment    4.08308    0.17366  23.512  < 2e-16 ***
-    ## blocks       0.38441    0.06165   6.235  2.7e-09 ***
+    ##                    Estimate Std. Error t value Pr(>|t|)    
+    ## (Intercept)         -0.5437     0.1749  -3.108  0.00217 ** 
+    ## factor(Treatment)1   3.9730     0.1749  22.710  < 2e-16 ***
+    ## factor(blocks)2      0.9637     0.2766   3.484  0.00061 ***
+    ## factor(blocks)3      0.5986     0.2143   2.794  0.00573 ** 
+    ## factor(blocks)4      2.0048     0.2143   9.357  < 2e-16 ***
+    ## factor(blocks)5      0.8621     0.2766   3.117  0.00211 ** 
     ## ---
     ## Signif. codes:  0 '***' 0.001 '**' 0.01 '*' 0.05 '.' 0.1 ' ' 1
     ## 
-    ## Residual standard error: 1.181 on 197 degrees of freedom
-    ## Multiple R-squared:  0.7414, Adjusted R-squared:  0.7388 
-    ## F-statistic: 282.5 on 2 and 197 DF,  p-value: < 2.2e-16
+    ## Residual standard error: 1.071 on 194 degrees of freedom
+    ## Multiple R-squared:  0.7903, Adjusted R-squared:  0.7849 
+    ## F-statistic: 146.3 on 5 and 194 DF,  p-value: < 2.2e-16
 
 ``` r
 fm1 <- lmer(value ~ factor(Treatment) + (1 | blocks), data = datax)
@@ -1126,3 +1202,10 @@ summary(fm1)
     ## Correlation of Fixed Effects:
     ##             (Intr)
     ## fctr(Trtm)1 -0.157
+
+Comments
+--------
+
+-   As *σ*<sub>*b*</sub><sup>2</sup> goes to infinity the mixed model estimate of the effect of interest approaches the fixed effect model, and in particular $\\bar{y} - \\bar{x}$.
+
+-   In cases when the variability between batches ( *σ*<sub>*b*</sub><sup>2</sup> ) is not that high with respect to the residual variability within bacthes ( *σ*<sub>*ϵ*</sub> ) then the mixed effect models balances and adjusts better the batch effect and provide more precise estimates of the effect of interest.
